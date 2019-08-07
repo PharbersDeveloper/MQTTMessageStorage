@@ -1,4 +1,4 @@
-module github.com/PharbersDeveloper/MessageStorage
+module github.com/PharbersDeveloper/MQTTMessageStorage
 
 go 1.12
 
