@@ -3,16 +3,16 @@ package test
 import (
 	"fmt"
 	emitter "github.com/emitter-io/go/v2"
-	"os"
-	"time"
 	. "github.com/smartystreets/goconvey/convey"
+	"strconv"
 	"testing"
+	"time"
 )
 
 func TestMQTTTopicToSendMessage(t *testing.T)  {
 	Convey("Topic To Send Message", t, func() {
 		var err error
-		channelKey  := os.Getenv("EMITTER_CHANNEL_KEY")
+		channelKey  := "iZ1BediMRalhi8RN93pGyR9i-yBqkQfT"
 
 		onMessageHandler := func(_ *emitter.Client, msg emitter.Message) {
 			fmt.Printf("[emitter] -> [B] received on specific handler: '%s' topic: '%s'\n", msg.Payload(), msg.Topic())
@@ -28,7 +28,13 @@ func TestMQTTTopicToSendMessage(t *testing.T)  {
 
 		// Publish to the channel
 		fmt.Println("[emitter] <- [B] publishing to 'demo/'")
-		err = client.Publish(channelKey, "demo/", "Fuck", emitter.WithAtLeastOnce())
+
+		arrays := []int{1, 2, 3, 4, 5}
+		for _, v := range arrays {
+			err = client.Publish(channelKey, "demo/", strconv.Itoa(v), emitter.WithAtLeastOnce())
+		}
+
+		//err = client.Publish(channelKey, "demo/", "Fuck", emitter.WithAtLeastOnce())
 
 		So(err, ShouldEqual, nil)
 	})
@@ -36,7 +42,7 @@ func TestMQTTTopicToSendMessage(t *testing.T)  {
 
 func TestMQTTTopicToReadMessage_1(t *testing.T)  {
 	Convey("Read MQTT Message", t, func() {
-		channelKey  := os.Getenv("EMITTER_CHANNEL_KEY")
+		channelKey  := "iZ1BediMRalhi8RN93pGyR9i-yBqkQfT"
 
 		var callBackMessage string
 
@@ -63,7 +69,7 @@ func TestMQTTTopicToReadMessage_1(t *testing.T)  {
 
 func TestMQTTTopicToReadMessage_2(t *testing.T)  {
 	Convey("Read MQTT Message", t, func() {
-		channelKey  := os.Getenv("EMITTER_CHANNEL_KEY")
+		channelKey  := "iZ1BediMRalhi8RN93pGyR9i-yBqkQfT"
 
 		var callBackMessage string
 

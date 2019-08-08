@@ -24,6 +24,7 @@ func TestGenerateKey(t *testing.T)  {
 		channelKey, _:= client.GenerateKey("Hv8HUCUDk6dFxoBttP7cp06UfEHzDXTU",
 										"demo/test/",
 									 "rwslp", 0)
+		fmt.Println(channelKey)
 		So(channelKey, ShouldNotEqual, "")
 	})
 }
