@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Common/MQTTChannelState"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Factory"
 	"github.com/alfredyang1986/BmServiceDef/BmApiResolver"
 	"github.com/alfredyang1986/BmServiceDef/BmConfig"
@@ -13,6 +14,10 @@ import (
 )
 
 func main() {
+	// 初始化MQTTChannel"伪池子"
+	state := MQTTChannelState.StateSlice{}
+	state.NewStateSlice()
+
 	version := "v0"
 	prodEnv := "MQTT_HOME"
 	bmlog.StandardLogger().Info("MQTT Server begins, version =", version)

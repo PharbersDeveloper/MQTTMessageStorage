@@ -2,6 +2,7 @@ package Strategy
 
 import (
 	"fmt"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Common/MQTTChannelState"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Pattern/Builder"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	emitter "github.com/emitter-io/go/v2"
@@ -23,13 +24,17 @@ func (rcs *RetrievingChannelStrategy) DoExecute(msg Message) (interface{}, error
 	channelKey := body["channelKey"].(string)
 	channel := body["channel"].(string)
 
-	builder := &Builder.EmitterClientBuilder{}
-	director := &Builder.Director {Bud: builder}
-	emitterClient := director.Create(rcs.URI, rcs.onMessageHandler)
-	client := emitterClient.GetClient()
+	state := MQTTChannelState.StateSlice{}
 
-	// 这边可能会有内存问题，压测试才知道
-	go func() { err = client.SubscribeWithHistory(channelKey, channel, 1, rcs.onMessageHandler) }()
+	if !state.Exist(channel) {
+		builder := &Builder.EmitterClientBuilder{}
+		director := &Builder.Director {Bud: builder}
+		emitterClient := director.Create(rcs.URI, rcs.onMessageHandler)
+		client := emitterClient.GetClient()
+		state.Push(channel)
+		// 这边可能会有内存问题，压测试才知道
+		go func() { err = client.SubscribeWithHistory(channelKey, channel, 1, rcs.onMessageHandler) }()
+	}
 
 	return nil, err
 }
