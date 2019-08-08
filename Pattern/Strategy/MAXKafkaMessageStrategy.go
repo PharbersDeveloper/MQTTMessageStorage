@@ -1,8 +1,10 @@
 package Strategy
 
 import (
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Pattern/Builder"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmlog"
+	emitter "github.com/emitter-io/go/v2"
 )
 
 type MAXKafkaMessageStrategy struct {
@@ -10,7 +12,25 @@ type MAXKafkaMessageStrategy struct {
 	URI string
 }
 
+func (msms *MAXKafkaMessageStrategy) onMessageHandler(c *emitter.Client, msg emitter.Message) {
+	// fmt.Printf("[emitter] -> [B] received on specific handler: '%s' topic: '%s'\n", msg.Payload(), msg.Topic())
+	// 从Emitter的调试上来看，这个MessageHandler没用到，But这是必须的参数
+}
+
 func (msms *MAXKafkaMessageStrategy) DoExecute(msg Message) (interface{}, error) {
 	bmlog.StandardLogger().Info("MAXKafkaMessageStrategy DoExecute")
-	return nil, nil
+
+	body := msg.Body.(map[string]interface{})
+	channelKey := body["channelKey"].(string)
+	channel := body["channel"].(string)
+
+
+	builder := &Builder.EmitterClientBuilder{}
+	director := &Builder.Director {Bud: builder}
+	emitterClient := director.Create(msms.URI, msms.onMessageHandler)
+	client := emitterClient.GetClient()
+
+	err := client.Publish(channelKey, channel, body, emitter.WithAtLeastOnce())
+
+	return nil, err
 }

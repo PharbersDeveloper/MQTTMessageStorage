@@ -14,7 +14,7 @@ type header struct {
 }
 
 type Message struct {
-	Header 	header	`json:"header"`
+	Header 	header			`json:"header"`
 	Body 	interface{}		`json:"body"`
 }
 
