@@ -1,6 +1,7 @@
 package Factory
 
 import (
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Handler"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
@@ -28,6 +29,7 @@ var MAIL_MIDDLEWARE_FACTORY = map[string]interface{}{
 var MAIL_DAEMON_FACTORY = map[string]interface{}{
 	"BmMongodbDaemon": BmMongodb.BmMongodb{},
 	"BmRedisDaemon":   BmRedis.BmRedis{},
+	"EmitterDaemon":   Daemons.Emitter{},
 }
 
 func (t Table) GetModelByName(name string) interface{} {

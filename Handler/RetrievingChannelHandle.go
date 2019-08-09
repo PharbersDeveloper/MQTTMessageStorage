@@ -2,6 +2,7 @@ package Handler
 
 import (
 	"encoding/json"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Pattern/Strategy"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
@@ -13,14 +14,16 @@ import (
 )
 
 type RetrievingChannelHandler struct {
-	Method     string
-	HttpMethod string
-	Args       []string
-	rd         *BmRedis.BmRedis
+	Method     	string
+	HttpMethod 	string
+	Args       	[]string
+	rd         	*BmRedis.BmRedis
+	em			*Daemons.Emitter
 }
 
 func (r RetrievingChannelHandler) NewRetrievingChannelHandler(args ...interface{}) RetrievingChannelHandler {
 	var rd *BmRedis.BmRedis
+	var em *Daemons.Emitter
 	var hm string
 	var md string
 	var ag []string
@@ -32,6 +35,8 @@ func (r RetrievingChannelHandler) NewRetrievingChannelHandler(args ...interface{
 				tm := reflect.ValueOf(tp).Elem().Type()
 				if tm.Name() == "BmRedis" {
 					rd = dm.(*BmRedis.BmRedis)
+				} else if tm.Name() == "Emitter" {
+					em = dm.(*Daemons.Emitter)
 				}
 			}
 		} else if i == 1 {
@@ -47,7 +52,7 @@ func (r RetrievingChannelHandler) NewRetrievingChannelHandler(args ...interface{
 		}
 	}
 
-	return RetrievingChannelHandler{Method: md, HttpMethod: hm, Args: ag, rd: rd}
+	return RetrievingChannelHandler{ Method: md, HttpMethod: hm, Args: ag, rd: rd, em: em }
 }
 
 func (r RetrievingChannelHandler) GetHttpMethod() string {
@@ -70,7 +75,7 @@ func (rc RetrievingChannelHandler) RetrievingChannel(w http.ResponseWriter, r *h
 	err = json.Unmarshal(body, &msg)
 
 	if err != nil {bmlog.StandardLogger().Error(err); return 1}
-	context := Strategy.MessageContext{ Msg: msg, Rd: rc.rd, URI: rc.Args[0]}
+	context := Strategy.MessageContext{ Msg: msg, Rd: rc.rd, Em: rc.em }
 	_, err = context.DoExecute()
 	if err != nil {
 		response["status"] = "error"

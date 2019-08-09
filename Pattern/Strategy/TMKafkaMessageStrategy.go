@@ -1,7 +1,7 @@
 package Strategy
 
 import (
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Pattern/Builder"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmlog"
 	emitter "github.com/emitter-io/go/v2"
@@ -9,7 +9,8 @@ import (
 
 type TMKafkaMessageStrategy struct {
 	Rd *BmRedis.BmRedis
-	URI string
+	Em *Daemons.Emitter
+	//URI string
 }
 
 func (tkms *TMKafkaMessageStrategy) onMessageHandler(c *emitter.Client, msg emitter.Message) {
@@ -25,10 +26,12 @@ func (tkms *TMKafkaMessageStrategy) DoExecute(msg Message) (interface{}, error) 
 	channel := body["channel"].(string)
 
 
-	builder := &Builder.EmitterClientBuilder{}
-	director := &Builder.Director {Bud: builder}
-	emitterClient := director.Create(tkms.URI, tkms.onMessageHandler)
-	client := emitterClient.GetClient()
+	//builder := &Builder.EmitterClientBuilder{}
+	//director := &Builder.Director {Bud: builder}
+	//emitterClient := director.Create(tkms.URI, tkms.onMessageHandler)
+	//client := emitterClient.GetClient()
+
+	client := tkms.Em.GetClient()
 
 	err := client.Publish(channelKey, channel, body, emitter.WithAtLeastOnce())
 

@@ -2,6 +2,7 @@ package Handler
 
 import (
 	"encoding/json"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Pattern/Strategy"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
@@ -13,14 +14,16 @@ import (
 )
 
 type KenGenHandler struct {
-	Method     string
-	HttpMethod string
-	Args       []string
-	rd         *BmRedis.BmRedis
+	Method     	string
+	HttpMethod 	string
+	Args       	[]string
+	rd         	*BmRedis.BmRedis
+	em			*Daemons.Emitter
 }
 
 func (k KenGenHandler) NewKenGenHandler(args ...interface{}) KenGenHandler {
 	var r *BmRedis.BmRedis
+	var em *Daemons.Emitter
 	var hm string
 	var md string
 	var ag []string
@@ -32,6 +35,8 @@ func (k KenGenHandler) NewKenGenHandler(args ...interface{}) KenGenHandler {
 				tm := reflect.ValueOf(tp).Elem().Type()
 				if tm.Name() == "BmRedis" {
 					r = dm.(*BmRedis.BmRedis)
+				} else if tm.Name() == "Emitter" {
+					em = dm.(*Daemons.Emitter)
 				}
 			}
 		} else if i == 1 {
@@ -47,7 +52,7 @@ func (k KenGenHandler) NewKenGenHandler(args ...interface{}) KenGenHandler {
 		}
 	}
 
-	return KenGenHandler{Method: md, HttpMethod: hm, Args: ag, rd: r}
+	return KenGenHandler{Method: md, HttpMethod: hm, Args: ag, rd: r, em: em}
 }
 
 func (k KenGenHandler) GetHttpMethod() string {
@@ -70,7 +75,7 @@ func (k KenGenHandler) KeyGen(w http.ResponseWriter, r *http.Request, _ httprout
 	err = json.Unmarshal(body, &msg)
 	if err != nil {bmlog.StandardLogger().Error(err); return 1}
 
-	context := Strategy.MessageContext{ Msg: msg, Rd: k.rd, URI: k.Args[0] }
+	context := Strategy.MessageContext{ Msg: msg, Rd: k.rd, Em: k.em }
 	res, err := context.DoExecute()
 	if err != nil { panic(err.Error()) }
 

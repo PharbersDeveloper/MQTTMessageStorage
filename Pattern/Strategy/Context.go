@@ -3,6 +3,7 @@ package Strategy
 import (
 	"errors"
 	"fmt"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmlog"
 )
@@ -22,16 +23,17 @@ type MessageContext struct {
 	strategy MessageStrategy
 	Msg Message
 	Rd *BmRedis.BmRedis
-	URI string
+	Em *Daemons.Emitter
+	//URI string
 }
 
 func (mc *MessageContext) mapping() error {
 	var err error
 	switch mc.Msg.Header.MsgType {
 	case "KeyGen":
-		mc.strategy = &GenerateChannelKeyStrategy{Rd: mc.Rd, URI: mc.URI}
+		mc.strategy = &GenerateChannelKeyStrategy{Rd: mc.Rd, Em: mc.Em}
 	case "RetrievingChannel":
-		mc.strategy = &RetrievingChannelStrategy{Rd: mc.Rd, URI: mc.URI}
+		mc.strategy = &RetrievingChannelStrategy{Rd: mc.Rd, Em: mc.Em}
 	default:
 		err = errors.New(fmt.Sprint(mc.Msg.Header.MsgType, "is not implementation"))
 	}

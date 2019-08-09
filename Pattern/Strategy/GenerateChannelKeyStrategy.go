@@ -2,7 +2,7 @@ package Strategy
 
 import (
 	"fmt"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Pattern/Builder"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	emitter "github.com/emitter-io/go/v2"
 	"github.com/go-redis/redis"
@@ -11,7 +11,8 @@ import (
 
 type GenerateChannelKeyStrategy struct {
 	Rd *BmRedis.BmRedis
-	URI string
+	Em *Daemons.Emitter
+	//URI string
 }
 
 func (g *GenerateChannelKeyStrategy) onMessageHandler(c *emitter.Client, msg emitter.Message) {
@@ -30,10 +31,12 @@ func (g *GenerateChannelKeyStrategy) DoExecute(msg Message) (interface{}, error)
 	defer rdClient.Close()
 	result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", channel)).Result()
 	if err == redis.Nil {
-		builder := &Builder.EmitterClientBuilder{}
-		director := &Builder.Director {Bud: builder}
-		emitterClient := director.Create(g.URI, g.onMessageHandler)
-		client := emitterClient.GetClient()
+		//builder := &Builder.EmitterClientBuilder{}
+		//director := &Builder.Director {Bud: builder}
+		//emitterClient := director.Create(g.URI, g.onMessageHandler)
+		//client := emitterClient.GetClient()
+
+		client := g.Em.GetClient()
 		key, err := client.GenerateKey(key, channel, permissions, ttl)
 		g.pushRedisData(fmt.Sprint("mqtt_channel_key_", channel), key, time.Duration(ttl) * time.Second)
 		return key, err

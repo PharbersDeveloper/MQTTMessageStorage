@@ -9,18 +9,20 @@ functions:
   create: NewKenGenHandler
   daemons:
   - BmRedisDaemon
+  - EmitterDaemon
   method: KeyGen
   http: POST
   args:
-  - tcp://127.0.0.1:46532
+  - null
 - name: RetrievingChannelHandler
   create: NewRetrievingChannelHandler
   daemons:
   - BmRedisDaemon
+  - EmitterDaemon
   method: RetrievingChannel
   http: POST
   args:
-  - tcp://127.0.0.1:46532
+  - null
 
 #middlewares:
 #- name: NtmCheckTokenMiddleware
@@ -36,14 +38,14 @@ panic:
   create: NewCommonPanicHandle
 
 daemons:
-#  - name: BmMongodbDaemon
-#    method: NewMongoDBDaemon
-#    args:
-##      host: primary
-##      port: 27017
-#      host: 127.0.0.1
+  - name: BmMongodbDaemon
+    method: NewMongoDBDaemon
+    args:
+#      host: primary
 #      port: 27017
-#      database: pharbers-auth-server
+      host: 127.0.0.1
+      port: 27017
+      database: pharbers-auth-server
   - name: BmRedisDaemon
     method: NewRedisDBDaemon
     args:
@@ -53,3 +55,7 @@ daemons:
       port: 6379
       password:
       database: 0
+  - name: EmitterDaemon
+    method: NewEmitterDaemon
+    args:
+      host: tcp://127.0.0.1:46532
