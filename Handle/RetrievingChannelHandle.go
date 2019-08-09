@@ -77,7 +77,7 @@ func (rc RetrievingChannelHandler) RetrievingChannel(w http.ResponseWriter, r *h
 
 	if err != nil {bmlog.StandardLogger().Error(err); return 1}
 	context := Strategy.MessageContext{ Msg: msg, Rd: rc.rd, Em: rc.em }
-	_, err = context.DoExecute()
+	_, err = context.Create()
 	if err != nil {
 		response["status"] = "error"
 		response["code"] = 500

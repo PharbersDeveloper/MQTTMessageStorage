@@ -77,7 +77,7 @@ func (k KenGenHandler) KeyGen(w http.ResponseWriter, r *http.Request, _ httprout
 	if err != nil {bmlog.StandardLogger().Error(err); return 1}
 
 	context := Strategy.MessageContext{ Msg: msg, Rd: k.rd, Em: k.em }
-	res, err := context.DoExecute()
+	res, err := context.Create()
 	if err != nil { panic(err.Error()) }
 
 	response["status"] = "success"
