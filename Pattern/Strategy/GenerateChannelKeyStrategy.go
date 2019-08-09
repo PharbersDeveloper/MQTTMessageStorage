@@ -3,6 +3,7 @@ package Strategy
 import (
 	"fmt"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	emitter "github.com/emitter-io/go/v2"
 	"github.com/go-redis/redis"
@@ -20,8 +21,8 @@ func (g *GenerateChannelKeyStrategy) onMessageHandler(c *emitter.Client, msg emi
 	// 从Emitter的调试上来看，这个MessageHandler没用到，But这是必须的参数
 }
 
-func (g *GenerateChannelKeyStrategy) DoExecute(msg Message) (interface{}, error) {
-	body := msg.Body.(map[string]interface{})
+func (g *GenerateChannelKeyStrategy) DoExecute(msg Model.Message) (interface{}, error) {
+	body := msg.PayLoad.(map[string]interface{})
 	key := body["securityKey"].(string)
 	channel := body["channel"].(string)
 	permissions := body["permissions"].(string)

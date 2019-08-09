@@ -23,6 +23,15 @@ functions:
   http: POST
   args:
   - null
+- name: PublishHandler
+  create: NewPublishHandler
+  daemons:
+    - BmRedisDaemon
+    - EmitterDaemon
+  method: Publish
+  http: POST
+  args:
+    - null
 
 #middlewares:
 #- name: NtmCheckTokenMiddleware

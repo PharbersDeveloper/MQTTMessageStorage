@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Common/MQTTChannelState"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	emitter "github.com/emitter-io/go/v2"
 )
@@ -19,9 +20,9 @@ func (rcs *RetrievingChannelStrategy) onMessageHandler(c *emitter.Client, msg em
 	fmt.Printf("RetrievingChannelStrategy => [emitter] -> [B] received on specific handler: '%s' topic: '%s'\n", msg.Payload(), msg.Topic())
 }
 
-func (rcs *RetrievingChannelStrategy) DoExecute(msg Message) (interface{}, error) {
+func (rcs *RetrievingChannelStrategy) DoExecute(msg Model.Message) (interface{}, error) {
 	var err error
-	body := msg.Body.(map[string]interface{})
+	body := msg.PayLoad.(map[string]interface{})
 	channelKey := body["channelKey"].(string)
 	channel := body["channel"].(string)
 

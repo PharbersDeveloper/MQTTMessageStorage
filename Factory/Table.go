@@ -2,7 +2,7 @@ package Factory
 
 import (
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Handler"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Handle"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 )
@@ -19,9 +19,10 @@ var MAIL_RESOURCE_FACTORY = map[string]interface{}{
 }
 
 var MAIL_FUNCTION_FACTORY = map[string]interface{}{
-	"CommonPanicHandle":		Handler.CommonPanicHandle{},
-	"KenGenHandler":			Handler.KenGenHandler{},
-	"RetrievingChannelHandler":	Handler.RetrievingChannelHandler{},
+	"CommonPanicHandle":        Handle.CommonPanicHandle{},
+	"KenGenHandler":            Handle.KenGenHandler{},
+	"RetrievingChannelHandler": Handle.RetrievingChannelHandler{},
+	"PublishHandler":			Handle.PublishHandler{},
 }
 var MAIL_MIDDLEWARE_FACTORY = map[string]interface{}{
 }

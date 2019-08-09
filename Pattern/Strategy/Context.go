@@ -4,24 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
+	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmlog"
 )
 
-type header struct {
-	Application	string	`json:"application"`
-	Type		string	`json:"type"`
-	MsgType		string	`json:"msgType"`
-}
-
-type Message struct {
-	Header 	header			`json:"header"`
-	Body 	interface{}		`json:"body"`
-}
-
 type MessageContext struct {
 	strategy MessageStrategy
-	Msg Message
+	Msg Model.Message
 	Rd *BmRedis.BmRedis
 	Em *Daemons.Emitter
 	//URI string
