@@ -4,6 +4,7 @@ type header struct {
 	Version 	int		`json:"version"`
 	Method 		string	`json:"Method"`
 	Language	string	`json:"Language"`
+	Code		int		`json:"code"`
 }
 
 type Message struct {
