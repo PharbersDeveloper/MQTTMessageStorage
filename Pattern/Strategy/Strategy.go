@@ -1,6 +1,6 @@
 package Strategy
 
-import "github.com/PharbersDeveloper/MQTTMessageStorage/Model"
+import "MQTTStorage/Model"
 
 type MessageStrategy interface {
 	DoExecute(msg Model.Message) (interface{}, error)

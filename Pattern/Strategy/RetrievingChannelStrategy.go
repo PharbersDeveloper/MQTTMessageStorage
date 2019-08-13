@@ -1,12 +1,18 @@
 package Strategy
 
 import (
+	"MQTTStorage/Common/MQTTChannelState"
+	"MQTTStorage/Daemons"
+	"MQTTStorage/Model"
+	"encoding/json"
 	"fmt"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Common/MQTTChannelState"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
+	"github.com/alfredyang1986/blackmirror/bmkafka"
+	"github.com/alfredyang1986/blackmirror/bmlog"
+	"github.com/elodina/go-avro"
 	emitter "github.com/emitter-io/go/v2"
+	"github.com/go-redis/redis"
+	kafkaAvro "github.com/elodina/go-kafka-avro"
 )
 
 type RetrievingChannelStrategy struct {
@@ -17,14 +23,29 @@ type RetrievingChannelStrategy struct {
 
 // TODO 向Kafka转发消息
 func (rcs *RetrievingChannelStrategy) onMessageHandler(c *emitter.Client, msg emitter.Message) {
-	fmt.Printf("RetrievingChannelStrategy => [emitter] -> [B] received on specific handler: '%s' topic: '%s'\n", msg.Payload(), msg.Topic())
+	message := Model.Message{}
+	json.Unmarshal(msg.Payload() ,&message)
+	topic := message.Header.Topic
+
+	if len(topic) > 0 {
+		kafka, _ := bmkafka.GetConfigInstance()
+		encoder := kafkaAvro.NewKafkaAvroEncoder(kafka.SchemaRepositoryUrl)
+		schema, err := avro.ParseSchema(string(msg.Payload()))
+		bmlog.StandardLogger().Error(err)
+		record := avro.NewGenericRecord(schema)
+		bmlog.StandardLogger().Error(err)
+		recordByteArr, err := encoder.Encode(record)
+		bmlog.StandardLogger().Error(err)
+		kafka.Produce(&topic, recordByteArr)
+	}
+	bmlog.StandardLogger().Infof("RetrievingChannelStrategy => [emitter] -> [B] received on specific handler: '%s' topic: '%s'\n", msg.Payload(), msg.Topic())
 }
 
 func (rcs *RetrievingChannelStrategy) DoExecute(msg Model.Message) (interface{}, error) {
 	var err error
-	body := msg.PayLoad.(map[string]interface{})
-	channelKey := body["channelKey"].(string)
-	channel := body["channel"].(string)
+	payload := msg.PayLoad.(map[string]interface{})
+	//channelKey := payload["channelKey"].(string)
+	channel := payload["channel"].(string)
 
 	state := MQTTChannelState.StateSlice{}
 
@@ -34,10 +55,14 @@ func (rcs *RetrievingChannelStrategy) DoExecute(msg Model.Message) (interface{},
 		//emitterClient := director.Create(rcs.URI, rcs.onMessageHandler)
 		//client := emitterClient.GetClient()
 
-		client := rcs.Em.GetClient()
-		state.Push(channel)
-		// 这边可能会有内存问题，压测试才知道
-		go func() { err = client.SubscribeWithHistory(channelKey, channel, 1, rcs.onMessageHandler) }()
+		rdClient := rcs.Rd.GetRedisClient()
+		result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", channel)).Result()
+		if err != redis.Nil {
+			client := rcs.Em.GetClient()
+			state.Push(channel)
+			// 这边可能会有内存问题，压测试才知道
+			go func() { err = client.SubscribeWithHistory(result, channel, 1, rcs.onMessageHandler) }()
+		}
 	}
 
 	return nil, err

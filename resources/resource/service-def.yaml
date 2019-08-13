@@ -23,6 +23,15 @@ functions:
   http: POST
   args:
   - null
+- name: RetrievingConsumerHandler
+  create: NewRetrievingConsumerHandler
+  daemons:
+  - BmRedisDaemon
+  - EmitterDaemon
+  method: RetrievingConsumerTopic
+  http: POST
+  args:
+  - null
 - name: PublishHandler
   create: NewPublishHandler
   daemons:
@@ -67,4 +76,4 @@ daemons:
   - name: EmitterDaemon
     method: NewEmitterDaemon
     args:
-      host: tcp://127.0.0.1:46532
+      host: tcp://123.56.179.133:46532

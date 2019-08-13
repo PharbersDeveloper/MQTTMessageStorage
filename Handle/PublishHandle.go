@@ -3,8 +3,8 @@ package Handle
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
+	"MQTTStorage/Daemons"
+	"MQTTStorage/Model"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmlog"
@@ -79,13 +79,12 @@ func (k PublishHandler) Publish(w http.ResponseWriter, r *http.Request, _ httpro
 	err = json.Unmarshal(body, &msg)
 	if err != nil {bmlog.StandardLogger().Error(err); return 1}
 
-	channel := msg.PayLoad.(map[string]interface{})["channel"].(string)
 	rdClient := k.rd.GetRedisClient()
-	result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", channel)).Result()
+	result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", msg.Header.Channel)).Result()
 	if err != redis.Nil {
-		b, _ := json.Marshal(msg.PayLoad)
+		b, _ := json.Marshal(msg)
 		client := k.em.GetClient()
-		err = client.Publish(result, channel, b, emitter.WithAtLeastOnce())
+		err = client.Publish(result, msg.Header.Channel, b, emitter.WithAtLeastOnce())
 		if err != nil { panic(err.Error()) }
 	} else { panic(err.Error()) }
 

@@ -2,7 +2,7 @@ package Handle
 
 import (
 	"fmt"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Panic"
+	"MQTTStorage/Panic"
 	"net/http"
 )
 

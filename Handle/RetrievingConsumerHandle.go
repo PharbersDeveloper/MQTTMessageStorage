@@ -2,9 +2,9 @@ package Handle
 
 import (
 	"encoding/json"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Pattern/Strategy"
+	"MQTTStorage/Daemons"
+	"MQTTStorage/Model"
+	"MQTTStorage/Pattern/Strategy"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmlog"
@@ -65,7 +65,7 @@ func (r RetrievingConsumerHandler) GetHandlerMethod() string {
 
 }
 
-func (rc RetrievingConsumerHandler) RetrievingConsumer(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
+func (rc RetrievingConsumerHandler) RetrievingConsumerTopic(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 	w.Header().Add("Content-Type", "application/json")
 	var response map[string]interface{}
 	response = make(map[string]interface{})

@@ -1,10 +1,8 @@
 package Model
 type header struct {
-	Application	string	`json:"application"`
-	Version 	int		`json:"version"`
-	Method 		string	`json:"Method"`
-	Language	string	`json:"Language"`
-	Code		int		`json:"code"`
+	Method 		string	`json:"method"`
+	Channel		string	`json:"channel"`
+	Topic		string 	`json:"topic"`
 }
 
 type Message struct {

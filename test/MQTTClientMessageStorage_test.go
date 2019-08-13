@@ -20,8 +20,8 @@ func TestMQTTTopicToSendMessage(t *testing.T)  {
 	Convey("Topic To Send Message", t, func() {
 		var err error
 
-		channelKey  := "iZ1BediMRalhi8RN93pGyR9i-yBqkQfT"
-		//channelKey  := "8FhgCOzhbHH444urugqWBrRYY3bGI7J1"
+		channelKey  := "UKKrMs2rhcHodW6KK57hOa47XB_VBowX"
+		//channelKey  := "G239dRa72LGJMkqzsVRsI9ubr8T_xu1t"
 
 		// Publish to the channel
 		fmt.Println("[emitter] <- [B] publishing to 'demo/'")
@@ -29,6 +29,31 @@ func TestMQTTTopicToSendMessage(t *testing.T)  {
 		arrays := []int{1, 2, 3, 4, 5}
 		for _, v := range arrays {
 			err = client.Publish(channelKey, "demo/", strconv.Itoa(v), emitter.WithAtLeastOnce())
+		}
+
+		//arrays := []int{1, 2, 3, 4, 5}
+		//for _, v := range arrays {
+		//	err = client.Publish(channelKey, "test/", strconv.Itoa(v), emitter.WithAtLeastOnce())
+		//}
+
+		//err = client.Publish(channelKey, "demo/", "Fuck", emitter.WithAtLeastOnce())
+
+		So(err, ShouldEqual, nil)
+	})
+}
+
+func TestMQTTTopicToSendMessage2(t *testing.T)  {
+	Convey("Topic To Send Message", t, func() {
+		var err error
+
+		channelKey  := "G239dRa72LGJMkqzsVRsI9ubr8T_xu1t"
+
+		// Publish to the channel
+		fmt.Println("[emitter] <- [B] publishing to 'demo/'")
+
+		arrays := []int{6, 7, 8, 9, 10}
+		for _, v := range arrays {
+			err = client.Publish(channelKey, "test/", strconv.Itoa(v), emitter.WithAtLeastOnce())
 		}
 
 		//err = client.Publish(channelKey, "demo/", "Fuck", emitter.WithAtLeastOnce())
@@ -39,7 +64,7 @@ func TestMQTTTopicToSendMessage(t *testing.T)  {
 
 func TestMQTTTopicToReadMessage_1(t *testing.T)  {
 	Convey("Read MQTT Message", t, func() {
-		channelKey  := "iZ1BediMRalhi8RN93pGyR9i-yBqkQfT"
+		channelKey  := "UKKrMs2rhcHodW6KK57hOa47XB_VBowX"
 
 		var callBackMessage string
 

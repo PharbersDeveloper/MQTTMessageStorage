@@ -3,13 +3,14 @@ package Strategy
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
+	"MQTTStorage/Daemons"
+	"MQTTStorage/Model"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	emitter "github.com/emitter-io/go/v2"
 	"github.com/go-redis/redis"
 )
 
+// Deprecated: 属于过度设计封禁
 type MAXKafkaMessageStrategy struct {
 	Rd *BmRedis.BmRedis
 	Em *Daemons.Emitter

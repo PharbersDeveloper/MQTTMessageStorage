@@ -1,7 +1,7 @@
 package Builder
 
 import (
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
+	"MQTTStorage/Model"
 	emitter "github.com/emitter-io/go/v2"
 )
 

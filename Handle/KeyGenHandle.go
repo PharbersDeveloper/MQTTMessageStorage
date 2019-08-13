@@ -2,9 +2,9 @@ package Handle
 
 import (
 	"encoding/json"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Daemons"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Model"
-	"github.com/PharbersDeveloper/MQTTMessageStorage/Pattern/Strategy"
+	"MQTTStorage/Daemons"
+	"MQTTStorage/Model"
+	"MQTTStorage/Pattern/Strategy"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmlog"
@@ -77,7 +77,7 @@ func (k KenGenHandler) KeyGen(w http.ResponseWriter, r *http.Request, _ httprout
 	if err != nil {bmlog.StandardLogger().Error(err); return 1}
 
 	context := Strategy.MessageContext{ Msg: msg, Rd: k.rd, Em: k.em }
-	res, err := context.Create()
+	res, err := context.DoExecute()
 	if err != nil { panic(err.Error()) }
 
 	response["status"] = "success"

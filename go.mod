@@ -1,11 +1,14 @@
-module github.com/PharbersDeveloper/MQTTMessageStorage
+module MQTTStorage
 
 go 1.12
 
 require (
-	github.com/alfredyang1986/BmServiceDef v0.0.0-20190410064517-b341f9e1e85e
+	github.com/alfredyang1986/BmServiceDef v0.0.1
 	github.com/alfredyang1986/blackmirror v0.0.12
+	github.com/confluentinc/confluent-kafka-go v1.0.0 // indirect
 	github.com/eclipse/paho.mqtt.golang v1.2.0
+	github.com/elodina/go-avro v0.0.0-20160406082632-0c8185d9a3ba
+	github.com/elodina/go-kafka-avro v0.0.0-20160422130714-ab6b1d1c9a23
 	github.com/emitter-io/go v1.0.0
 	github.com/emitter-io/go/v2 v2.0.4
 	github.com/go-redis/redis v6.15.2+incompatible
