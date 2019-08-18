@@ -13,11 +13,11 @@ ENV MQTT_HOME $GOPATH/src/github.com/PharbersDeveloper/MQTTMessageStorage/resour
 ENV BM_KAFKA_CONF_HOME $GOPATH/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/kafkaconfig.json
 ENV GO111MODULE on
 ENV LOGGER_USER "Alex"
-ENV LOGGER_DEBUG "false"
-ENV LOG_PATH $GOPATH/logs/mqtt.log
+ENV LOGGER_DEBUG "true"
+ENV LOG_PATH /mqtt.log
 
 # 以LABEL行的变动(version的变动)来划分(变动以上)使用cache和(变动以下)不使用cache
-LABEL NtmPods.version="0.0.2" maintainer="Alex"
+LABEL NtmPods.version="0.0.3" maintainer="Alex"
 
 # 下载kafka
 RUN git clone https://github.com/edenhill/librdkafka.git $GOPATH/librdkafka
