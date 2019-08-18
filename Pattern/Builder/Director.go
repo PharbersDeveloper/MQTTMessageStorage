@@ -5,6 +5,7 @@ import (
 	emitter "github.com/emitter-io/go/v2"
 )
 
+// Deprecated: 属于过度设计封禁
 type Director struct {
 	Bud Builder
 }

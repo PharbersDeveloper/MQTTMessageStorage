@@ -3,15 +3,15 @@ package main
 import (
 	"MQTTStorage/Common/MQTTChannelState"
 	"MQTTStorage/Factory"
-	"fmt"
+	"net/http"
+	"os"
+
 	"github.com/alfredyang1986/BmServiceDef/BmApiResolver"
 	"github.com/alfredyang1986/BmServiceDef/BmConfig"
 	"github.com/alfredyang1986/BmServiceDef/BmPodsDefine"
 	"github.com/alfredyang1986/blackmirror/bmlog"
 	"github.com/julienschmidt/httprouter"
 	"github.com/manyminds/api2go"
-	"net/http"
-	"os"
 )
 
 func main() {
@@ -19,7 +19,8 @@ func main() {
 	state := MQTTChannelState.StateSlice{}
 	state.NewStateSlice()
 
-	os.Setenv("BM_KAFKA_CONF_HOME", fmt.Sprint(os.Getenv("BM_KAFKA_CONF_HOME"), "MQTTMessageStorage/resources/resource/kafkaconfig.json"))
+	// 本地调试打开
+	// os.Setenv("BM_KAFKA_CONF_HOME", fmt.Sprint(os.Getenv("BM_KAFKA_CONF_HOME"), "MQTTMessageStorage/resources/resource/kafkaconfig.json"))
 
 	version := "v0"
 	prodEnv := "MQTT_HOME"

@@ -1,10 +1,10 @@
 {
   "Broker":"59.110.31.50:9092",
   "SchemaRepositoryUrl":"http://59.110.31.50:8081",
-  "Group":"MQTTTest",
-  "CaLocation":"/Users/qianpeng/kafka/secrets/snakeoil-ca-1.crt",
-  "CaSignedLocation":"/Users/qianpeng/kafka/secrets/kafkacat-ca1-signed.pem",
-  "SslKeyLocation":"/Users/qianpeng/kafka/secrets/kafkacat.client.key",
+  "Group":"MQTT",
+  "CaLocation":"/snakeoil-ca-1.crt",
+  "CaSignedLocation":"/kafkacat-ca1-signed.pem",
+  "SslKeyLocation":"/kafkacat.client.key",
   "Pass":"pharbers",
   "Topics": [
   ]

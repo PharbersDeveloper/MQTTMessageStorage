@@ -4,6 +4,7 @@ import (
 	emitter "github.com/emitter-io/go/v2"
 )
 
+// Deprecated: 属于过度设计封禁
 type EmitterClient struct {
 	URI string
 	MessageHandler func(c *emitter.Client, msg emitter.Message)
