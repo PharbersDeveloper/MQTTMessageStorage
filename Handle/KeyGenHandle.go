@@ -1,13 +1,13 @@
 package Handle
 
 import (
-	"encoding/json"
 	"MQTTStorage/Daemons"
 	"MQTTStorage/Model"
 	"MQTTStorage/Pattern/Strategy"
+	"encoding/json"
+	"github.com/PharbersDeveloper/bp-go-lib/log"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
-	"github.com/alfredyang1986/blackmirror/bmlog"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
 	"net/http"
@@ -71,20 +71,30 @@ func (k KenGenHandler) KeyGen(w http.ResponseWriter, r *http.Request, _ httprout
 	response = make(map[string]interface{})
 	enc := json.NewEncoder(w)
 
+	ERROR := func() int {
+		response["status"] = "error"
+		response["code"] = http.StatusInternalServerError
+		response["msg"] = "Generate KeyGen Error"
+		_ = enc.Encode(response)
+		return 1
+	}
+
+	SUCCESS := func(res interface{}) int {
+		response["status"] = "success"
+		response["code"] = http.StatusOK
+		response["msg"] = "Generate KeyGen Success"
+		response["body"] = map[string]interface{}{ "channelKey": res.(string) }
+		_ = enc.Encode(response)
+		return 0
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT读取参数出错 => ", err); return ERROR() }
 	msg := Model.Message{}
 	err = json.Unmarshal(body, &msg)
-	if err != nil {bmlog.StandardLogger().Error(err); return 1}
-
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error(err); return ERROR() }
 	context := Strategy.MessageContext{ Msg: msg, Rd: k.rd, Em: k.em }
 	res, err := context.DoExecute()
-	if err != nil { panic(err.Error()) }
-
-	response["status"] = "success"
-	response["code"] = 200
-	response["msg"] = "Generate KeyGen Success"
-	response["body"] = map[string]interface{}{ "channelKey": res.(string) }
-	enc.Encode(response)
-
-	return 0
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("生成MQTT Channel Key错误 => ", err); return ERROR() }
+	return SUCCESS(res)
 }

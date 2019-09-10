@@ -6,13 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/PharbersDeveloper/bp-go-lib/log"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmkafka"
-	"github.com/alfredyang1986/blackmirror/bmlog"
 	"github.com/elodina/go-avro"
+	kafkaAvro "github.com/elodina/go-kafka-avro"
 	emitter "github.com/emitter-io/go/v2"
 	"github.com/go-redis/redis"
-	kafkaAvro "github.com/elodina/go-kafka-avro"
 )
 
 type RetrievingConsumerStrategy struct {
@@ -29,14 +29,23 @@ func (rcs *RetrievingConsumerStrategy) onConsumerHandler(content interface{}) {
 	message := []byte(decodedRecord.String())
 
 	msgModel := Model.Message{}
-	json.Unmarshal(message, &msgModel)
-	bmlog.StandardLogger().Warn(msgModel.Header.Channel)
-	rdClient := rcs.Rd.GetRedisClient()
-	result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", msgModel.Header.Channel)).Result()
-	if err != redis.Nil {
-		client := rcs.Em.GetClient()
-		err := client.Publish(result, msgModel.Header.Channel, fmt.Sprint(msgModel.PayLoad), emitter.WithAtLeastOnce())
-		if err != nil { bmlog.StandardLogger().Error(err.Error()); panic(err.Error()) }
+	_ = json.Unmarshal(message, &msgModel)
+
+	if len(msgModel.Header.Channel) > 0 {
+		log.NewLogicLoggerBuilder().Build().Info("从Kafka中获取MQTT Channel地址 => ", msgModel.Header.Channel)
+		rdClient := rcs.Rd.GetRedisClient()
+		result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", msgModel.Header.Channel)).Result()
+		if err != redis.Nil {
+			client := rcs.Em.GetClient()
+			err := client.Publish(result, msgModel.Header.Channel, fmt.Sprint(msgModel.PayLoad), emitter.WithAtLeastOnce())
+			if err != nil {
+				log.NewLogicLoggerBuilder().Build().Error("从Kafka发送获取MQTT Channel地址发送失败,错误信息 => ",err)
+				panic(err.Error())
+			}
+		} else if err != nil {
+			log.NewLogicLoggerBuilder().Build().Error(err)
+			panic(err)
+		}
 	}
 }
 
@@ -47,8 +56,12 @@ func (rcs *RetrievingConsumerStrategy) DoExecute(msg Model.Message) (interface{}
 	if len(topic) > 0 {
 		kafka, err := bmkafka.GetConfigInstance()
 		kafka.Topics = []string{topic}
-		if err == nil { go func() { kafka.SubscribeTopics(kafka.Topics, rcs.onConsumerHandler) }() }
+		if err == nil { go func() {
+			log.NewLogicLoggerBuilder().Build().Info("Kafka 启动Consumer监听,Topic => ", topic)
+			kafka.SubscribeTopics(kafka.Topics, rcs.onConsumerHandler)
+		}() }
 	} else {
+		log.NewLogicLoggerBuilder().Build().Error("Kafka 启动Consumer监听失败，原因Topic为空!")
 		err = errors.New("Topic Is Null")
 	}
 

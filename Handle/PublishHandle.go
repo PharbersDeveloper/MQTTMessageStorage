@@ -1,13 +1,13 @@
 package Handle
 
 import (
-	"encoding/json"
-	"fmt"
 	"MQTTStorage/Daemons"
 	"MQTTStorage/Model"
+	"encoding/json"
+	"fmt"
+	"github.com/PharbersDeveloper/bp-go-lib/log"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
-	"github.com/alfredyang1986/blackmirror/bmlog"
 	emitter "github.com/emitter-io/go/v2"
 	"github.com/go-redis/redis"
 	"github.com/julienschmidt/httprouter"
@@ -74,24 +74,36 @@ func (k PublishHandler) Publish(w http.ResponseWriter, r *http.Request, _ httpro
 	response = make(map[string]interface{})
 	enc := json.NewEncoder(w)
 
+	ERROR := func() int {
+		response["status"] = "error"
+		response["code"] = http.StatusInternalServerError
+		response["msg"] = "Publish Error"
+		_ = enc.Encode(response)
+		return 1
+	}
+
+	SUCCESS := func() int {
+		response["status"] = "success"
+		response["code"] = http.StatusOK
+		response["msg"] = "Publish Success"
+		_ = enc.Encode(response)
+		return 0
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT读取发送参数出错 => ", err); return ERROR() }
 	msg := Model.Message{}
 	err = json.Unmarshal(body, &msg)
-	if err != nil {bmlog.StandardLogger().Error(err); return 1}
-
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT解析参数出错 => ", err); return ERROR() }
 	rdClient := k.rd.GetRedisClient()
 	result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", msg.Header.Channel)).Result()
-	if err != redis.Nil {
-		b, _ := json.Marshal(msg)
-		client := k.em.GetClient()
-		err = client.Publish(result, msg.Header.Channel, b, emitter.WithAtLeastOnce())
-		if err != nil { panic(err.Error()) }
-	} else { panic(err.Error()) }
 
-	response["status"] = "success"
-	response["code"] = http.StatusOK
-	response["msg"] = "Publish Success"
-	enc.Encode(response)
+	if err == redis.Nil || err != nil { log.NewLogicLoggerBuilder().Build().Error("Redis 获取数据时出错 => ", err); return ERROR() }
 
-	return 0
+	b, _ := json.Marshal(msg)
+	client := k.em.GetClient()
+	err = client.Publish(result, msg.Header.Channel, b, emitter.WithAtLeastOnce())
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT发送消息出错 => ", err); return ERROR() }
+
+	return SUCCESS()
 }

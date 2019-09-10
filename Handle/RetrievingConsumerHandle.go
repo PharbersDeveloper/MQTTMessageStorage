@@ -1,13 +1,13 @@
 package Handle
 
 import (
-	"encoding/json"
 	"MQTTStorage/Daemons"
 	"MQTTStorage/Model"
 	"MQTTStorage/Pattern/Strategy"
+	"encoding/json"
+	"github.com/PharbersDeveloper/bp-go-lib/log"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
-	"github.com/alfredyang1986/blackmirror/bmlog"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
 	"net/http"
@@ -65,25 +65,27 @@ func (r RetrievingConsumerHandler) GetHandlerMethod() string {
 
 }
 
-func (rc RetrievingConsumerHandler) RetrievingConsumerTopic(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
+func (r RetrievingConsumerHandler) RetrievingConsumerTopic(w http.ResponseWriter, req *http.Request, _ httprouter.Params) int {
 	w.Header().Add("Content-Type", "application/json")
 	var response map[string]interface{}
 	response = make(map[string]interface{})
-
 	enc := json.NewEncoder(w)
-	body, err := ioutil.ReadAll(r.Body)
-	msg := Model.Message{}
-	err = json.Unmarshal(body, &msg)
 
-	if err != nil {bmlog.StandardLogger().Error(err); return 1}
-	context := Strategy.MessageContext{ Msg: msg, Rd: rc.rd, Em: rc.em }
-	_, err = context.DoExecute()
-	if err != nil {
+	ERROR := func() int {
 		response["status"] = "error"
-		response["code"] = 500
-		response["msg"] = err.Error()
-		enc.Encode(response)
+		response["code"] = http.StatusInternalServerError
+		response["msg"] = "Consumer监听失败"
+		_ = enc.Encode(response)
 		return 1
 	}
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("监听Consumer读取参数出错 => ", err); return ERROR() }
+	msg := Model.Message{}
+	err = json.Unmarshal(body, &msg)
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("解析地址发送参数出错 => ",err); return ERROR() }
+	context := Strategy.MessageContext{ Msg: msg, Rd: r.rd, Em: r.em }
+	_, err = context.DoExecute()
+	if err != nil { return ERROR() }
 	return 0
 }

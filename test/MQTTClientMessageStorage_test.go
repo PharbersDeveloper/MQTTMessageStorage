@@ -14,7 +14,7 @@ var onMessageHandler = func(_ *emitter.Client, msg emitter.Message) {
 }
 
 // Create the client and connect to the broker
-var client, _ = emitter.Connect("tcp://127.0.0.1:46532", onMessageHandler)
+var client, _ = emitter.Connect("tcp://59.110.31.215:46532", onMessageHandler)
 
 func TestMQTTTopicToSendMessage(t *testing.T)  {
 	Convey("Topic To Send Message", t, func() {
@@ -64,7 +64,7 @@ func TestMQTTTopicToSendMessage2(t *testing.T)  {
 
 func TestMQTTTopicToReadMessage_1(t *testing.T)  {
 	Convey("Read MQTT Message", t, func() {
-		channelKey  := "UKKrMs2rhcHodW6KK57hOa47XB_VBowX"
+		channelKey  := "72Pt4R1ANFwBpuZRynrK4tjVL5ED1eLu"
 
 		var callBackMessage string
 
@@ -79,9 +79,9 @@ func TestMQTTTopicToReadMessage_1(t *testing.T)  {
 		//client, _ := emitter.Connect("tcp://127.0.0.1:46532", onMessageHandler)
 
 		// Subscribe to demo channel
-		fmt.Println("[emitter] <- [B] subscribing to 'demo/'")
-		//_ = client.Subscribe(channelKey, "demo/", onMessageHandler)
-		_ = client.SubscribeWithHistory(channelKey, "demo/",1, onMessageHandler)
+		fmt.Println("[emitter] <- [B] subscribing to 'test-qi/'")
+		_ = client.Subscribe(channelKey, "test-qi/", onMessageHandler)
+		//_ = client.SubscribeWithHistory(channelKey, "test-qi/",1, onMessageHandler)
 
 		time.Sleep(180 * time.Second)
 

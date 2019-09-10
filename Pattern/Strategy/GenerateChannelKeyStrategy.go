@@ -1,9 +1,10 @@
 package Strategy
 
 import (
-	"fmt"
 	"MQTTStorage/Daemons"
 	"MQTTStorage/Model"
+	"fmt"
+	"github.com/PharbersDeveloper/bp-go-lib/log"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	emitter "github.com/emitter-io/go/v2"
 	"github.com/go-redis/redis"
@@ -31,15 +32,18 @@ func (g *GenerateChannelKeyStrategy) DoExecute(msg Model.Message) (interface{}, 
 	rdClient := g.Rd.GetRedisClient()
 	defer rdClient.Close()
 	result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", channel)).Result()
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
 	if err == redis.Nil {
 		//builder := &Builder.EmitterClientBuilder{}
 		//director := &Builder.Director {Bud: builder}
 		//emitterClient := director.Create(g.URI, g.onMessageHandler)
 		//client := emitterClient.GetClient()
-
+		log.NewLogicLoggerBuilder().Build().Warn(err)
 		client := g.Em.GetClient()
 		key, err := client.GenerateKey(key, channel, permissions, ttl)
-		g.pushRedisData(fmt.Sprint("mqtt_channel_key_", channel), key, time.Duration(ttl) * time.Second)
+		if err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
+		err = g.pushRedisData(fmt.Sprint("mqtt_channel_key_", channel), key, time.Duration(ttl) * time.Second)
+		if err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
 		return key, err
 	}
 	return result, nil
@@ -51,5 +55,6 @@ func (g *GenerateChannelKeyStrategy) pushRedisData(key string, value interface{}
 	pipe := rdClient.Pipeline()
 	pipe.Set(key, value, time)
 	_, err := pipe.Exec()
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
 	return err
 }

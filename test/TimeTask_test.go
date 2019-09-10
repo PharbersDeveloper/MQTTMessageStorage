@@ -10,7 +10,6 @@ import (
 
 func TestMqttPublishTimeTask(t *testing.T) {
 	t.Parallel()
-
 	Convey("Test Mqtt Publish", t, func() {
 		client, _ := emitter.Connect("tcp://123.56.179.133:46532", func(client *emitter.Client, message emitter.Message) {
 			fmt.Printf("[emitter] -> [B] received: '%s' topic: '%s'\n", message.Payload(), message.Topic())

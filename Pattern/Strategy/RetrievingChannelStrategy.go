@@ -6,13 +6,13 @@ import (
 	"MQTTStorage/Model"
 	"encoding/json"
 	"fmt"
+	"github.com/PharbersDeveloper/bp-go-lib/log"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/alfredyang1986/blackmirror/bmkafka"
-	"github.com/alfredyang1986/blackmirror/bmlog"
 	"github.com/elodina/go-avro"
+	kafkaAvro "github.com/elodina/go-kafka-avro"
 	emitter "github.com/emitter-io/go/v2"
 	"github.com/go-redis/redis"
-	kafkaAvro "github.com/elodina/go-kafka-avro"
 )
 
 type RetrievingChannelStrategy struct {
@@ -24,21 +24,22 @@ type RetrievingChannelStrategy struct {
 // TODO 向Kafka转发消息
 func (rcs *RetrievingChannelStrategy) onMessageHandler(c *emitter.Client, msg emitter.Message) {
 	message := Model.Message{}
-	json.Unmarshal(msg.Payload() ,&message)
+	_ = json.Unmarshal(msg.Payload() ,&message)
 	topic := message.Header.Topic
+	log.NewLogicLoggerBuilder().Build().Infof("RetrievingChannelStrategy => [emitter] -> [B] received on specific handler: '%s' topic: '%s'\n", msg.Payload(), msg.Topic())
 
 	if len(topic) > 0 {
 		kafka, _ := bmkafka.GetConfigInstance()
 		encoder := kafkaAvro.NewKafkaAvroEncoder(kafka.SchemaRepositoryUrl)
 		schema, err := avro.ParseSchema(string(msg.Payload()))
-		bmlog.StandardLogger().Error(err)
+		log.NewLogicLoggerBuilder().Build().Error(err)
 		record := avro.NewGenericRecord(schema)
-		bmlog.StandardLogger().Error(err)
+		log.NewLogicLoggerBuilder().Build().Error(err)
 		recordByteArr, err := encoder.Encode(record)
-		bmlog.StandardLogger().Error(err)
+		log.NewLogicLoggerBuilder().Build().Error(err)
 		kafka.Produce(&topic, recordByteArr)
 	}
-	bmlog.StandardLogger().Infof("RetrievingChannelStrategy => [emitter] -> [B] received on specific handler: '%s' topic: '%s'\n", msg.Payload(), msg.Topic())
+
 }
 
 func (rcs *RetrievingChannelStrategy) DoExecute(msg Model.Message) (interface{}, error) {
@@ -57,11 +58,16 @@ func (rcs *RetrievingChannelStrategy) DoExecute(msg Model.Message) (interface{},
 
 		rdClient := rcs.Rd.GetRedisClient()
 		result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", channel)).Result()
+		if err == redis.Nil || err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
 		if err != redis.Nil {
 			client := rcs.Em.GetClient()
 			state.Push(channel)
 			// 这边可能会有内存问题，压测试才知道
-			go func() { err = client.SubscribeWithHistory(result, channel, 1, rcs.onMessageHandler) }()
+			go func() {
+				err = client.SubscribeWithHistory(result, channel, 1, rcs.onMessageHandler)
+				if err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
+			}()
+
 		}
 	}
 
