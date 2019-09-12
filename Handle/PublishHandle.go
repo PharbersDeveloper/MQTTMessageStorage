@@ -105,5 +105,6 @@ func (k PublishHandler) Publish(w http.ResponseWriter, r *http.Request, _ httpro
 	err = client.Publish(result, msg.Header.Channel, b, emitter.WithAtLeastOnce())
 	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT发送消息出错 => ", err); return ERROR() }
 
+	log.NewLogicLoggerBuilder().Build().Infof("MQTT Client发送消息，Channel => %s,内容 => %s", msg.Header.Channel, b)
 	return SUCCESS()
 }

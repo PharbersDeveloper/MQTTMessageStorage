@@ -26,7 +26,7 @@ func (rcs *RetrievingChannelStrategy) onMessageHandler(c *emitter.Client, msg em
 	message := Model.Message{}
 	_ = json.Unmarshal(msg.Payload() ,&message)
 	topic := message.Header.Topic
-	log.NewLogicLoggerBuilder().Build().Infof("RetrievingChannelStrategy => [emitter] -> [B] received on specific handler: '%s' topic: '%s'\n", msg.Payload(), msg.Topic())
+	log.NewLogicLoggerBuilder().Build().Infof("接收到MQTT Channel消息: '%s' MQTTTopic: '%s'\n", msg.Payload(), msg.Topic())
 
 	if len(topic) > 0 {
 		kafka, _ := bmkafka.GetConfigInstance()

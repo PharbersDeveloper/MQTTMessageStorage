@@ -87,5 +87,6 @@ func (r RetrievingConsumerHandler) RetrievingConsumerTopic(w http.ResponseWriter
 	context := Strategy.MessageContext{ Msg: msg, Rd: r.rd, Em: r.em }
 	_, err = context.DoExecute()
 	if err != nil { return ERROR() }
+	log.NewLogicLoggerBuilder().Build().Infof("MQTT 开启监听Kafka Consumer，Topic => %s", msg.Header.Topic)
 	return 0
 }

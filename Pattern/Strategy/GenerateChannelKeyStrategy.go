@@ -44,8 +44,10 @@ func (g *GenerateChannelKeyStrategy) DoExecute(msg Model.Message) (interface{}, 
 		if err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
 		err = g.pushRedisData(fmt.Sprint("mqtt_channel_key_", channel), key, time.Duration(ttl) * time.Second)
 		if err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
+		log.NewLogicLoggerBuilder().Build().Info("生成MQTT ChannelKey =>", key)
 		return key, err
 	}
+	log.NewLogicLoggerBuilder().Build().Info("已存在MQTT ChannelKey =>", key)
 	return result, nil
 }
 
@@ -56,5 +58,6 @@ func (g *GenerateChannelKeyStrategy) pushRedisData(key string, value interface{}
 	pipe.Set(key, value, time)
 	_, err := pipe.Exec()
 	if err != nil { log.NewLogicLoggerBuilder().Build().Error(err) }
+	log.NewLogicLoggerBuilder().Build().Info("Redis 存入 MQTT ChannelKey =>", key)
 	return err
 }

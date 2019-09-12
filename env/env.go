@@ -1,7 +1,6 @@
 package env
 
 import (
-	"github.com/PharbersDeveloper/bp-go-lib/env"
 	"os"
 )
 
@@ -28,7 +27,7 @@ func SetEnv() {
 	_ = os.Setenv(LogOutput, "console")
 
 	//_ = os.Setenv(env.LogOutput, "./bp-go-lib.log")
-	_ = os.Setenv(env.LogLevel, "info")
+	_ = os.Setenv(LogLevel, "info")
 
 	//kafka
 	//_ = os.Setenv(KafkaConfigPath, "../resources/kafka_config.json")

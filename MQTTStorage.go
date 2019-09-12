@@ -3,7 +3,6 @@ package main
 import (
 	"MQTTStorage/Common/MQTTChannelState"
 	"MQTTStorage/Factory"
-	"MQTTStorage/env"
 	"net/http"
 	"os"
 
@@ -16,7 +15,9 @@ import (
 )
 
 func main() {
-	env.SetEnv()
+
+	//env.SetEnv()
+
 	// 初始化MQTTChannel"伪池子"
 	state := MQTTChannelState.StateSlice{}
 	state.NewStateSlice()

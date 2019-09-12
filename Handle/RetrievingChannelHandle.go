@@ -89,5 +89,7 @@ func (r RetrievingChannelHandler) RetrievingChannel(w http.ResponseWriter, req *
 	context := Strategy.MessageContext{ Msg: msg, Rd: r.rd, Em: r.em }
 	_, err = context.DoExecute()
 	if err != nil { log.NewLogicLoggerBuilder().Build().Error("监听Channel出错 => ", err); return ERROR() }
+
+	log.NewLogicLoggerBuilder().Build().Infof("MQTT 开启监听Channel，Channel => %s", msg.Header.Channel)
 	return 0
 }
