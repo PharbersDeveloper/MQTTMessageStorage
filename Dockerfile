@@ -46,7 +46,7 @@ ENV MQTT_HOME /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources
 ENV BM_KAFKA_CONF_HOME /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/kafkaconfig.json
 ENV PROJECT_NAME MQTTMessageStorage
 ENV BP_LOG_TIME_FORMAT "2006-01-02 15:04:05"
-ENV BP_LOG_OUTPUT /go/log/mqtt.log
+ENV BP_LOG_OUTPUT /go/log/mqtt-message-storage.log
 ENV BP_LOG_LEVEL info
 
 WORKDIR /go/log

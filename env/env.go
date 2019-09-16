@@ -25,8 +25,7 @@ func SetEnv() {
 	//log
 	_ = os.Setenv(LogTimeFormat, "2006-01-02 15:04:05")
 	_ = os.Setenv(LogOutput, "console")
-
-	//_ = os.Setenv(env.LogOutput, "./bp-go-lib.log")
+	//_ = os.Setenv(env.LogOutput, "/Users/qianpeng/bplogs/mqtt-message-storage.log")
 	_ = os.Setenv(LogLevel, "info")
 
 	//kafka
