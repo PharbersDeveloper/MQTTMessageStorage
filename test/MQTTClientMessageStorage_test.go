@@ -91,7 +91,7 @@ func TestMQTTTopicToReadMessage_1(t *testing.T)  {
 
 func TestMQTTTopicToReadMessage_2(t *testing.T)  {
 	Convey("Read MQTT Message", t, func() {
-		channelKey  := "8FhgCOzhbHH444urugqWBrRYY3bGI7J1"
+		channelKey  := "3-9kS0TxsJupymws2yKmXbI-x1OXu78p"
 
 		var callBackMessage string
 
@@ -107,9 +107,9 @@ func TestMQTTTopicToReadMessage_2(t *testing.T)  {
 		//client, _ := emitter.Connect("tcp://127.0.0.1:46532", onMessageHandler)
 
 		// Subscribe to demo channel
-		fmt.Println("[emitter] <- [B] subscribing to 'test/'")
+		fmt.Println("[emitter] <- [B] subscribing to 'tm/'")
 		//_ = client.Subscribe(channelKey, "demo/", onMessageHandler)
-		_ = client.SubscribeWithHistory(channelKey, "test/",1, onMessageHandler)
+		_ = client.SubscribeWithHistory(channelKey, "tm/",1, onMessageHandler)
 
 		time.Sleep(180 * time.Second)
 

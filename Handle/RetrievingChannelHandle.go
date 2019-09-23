@@ -81,15 +81,15 @@ func (r RetrievingChannelHandler) RetrievingChannel(w http.ResponseWriter, req *
 
 
 	body, err := ioutil.ReadAll(req.Body)
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("监听Channel读取参数出错 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("监听Channel读取参数出错  ", err); return ERROR() }
 	msg := Model.Message{}
 	err = json.Unmarshal(body, &msg)
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("解析地址发送参数出错 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("解析地址发送参数出错  ", err); return ERROR() }
 
 	context := Strategy.MessageContext{ Msg: msg, Rd: r.rd, Em: r.em }
 	_, err = context.DoExecute()
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("监听Channel出错 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("监听Channel出错  ", err); return ERROR() }
 
-	log.NewLogicLoggerBuilder().Build().Infof("MQTT 开启监听Channel，Channel => %s", msg.Header.Channel)
+	log.NewLogicLoggerBuilder().Build().Infof("MQTT 开启监听Channel，Channel  %s", msg.Header.Channel)
 	return 0
 }

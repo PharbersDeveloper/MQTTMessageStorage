@@ -8,7 +8,8 @@ MAINTAINER Pharbers "pqian@pharbers.com"
 RUN echo http://mirrors.aliyun.com/alpine/edge/main > /etc/apk/repositories \
 && echo http://mirrors.aliyun.com/alpine/edge/community >> /etc/apk/repositories \
 && apk update \
-&& apk add --no-cache bash git gcc g++ openssl-dev librdkafka-dev pkgconf
+&& apk add --no-cache bash git gcc g++ openssl-dev librdkafka-dev pkgconf \
+&& rm -rf /var/cache/apk/*
 
 # 环境变量
 #ENV PKG_CONFIG_PATH /usr/lib/pkgconfig
@@ -38,7 +39,12 @@ MAINTAINER Pharbers "pqian@pharbers.com"
 RUN echo http://mirrors.aliyun.com/alpine/edge/main > /etc/apk/repositories \
 && echo http://mirrors.aliyun.com/alpine/edge/community >> /etc/apk/repositories \
 && apk update \
-&& apk add --no-cache bash git gcc g++ openssl-dev librdkafka-dev pkgconf
+&& apk add --no-cache bash git gcc g++ openssl-dev librdkafka-dev pkgconf \
+&& apk add --no-cache tzdata \
+&& ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+&& echo "Asia/Shanghai" > /etc/timezone \
+&& apk del tzdata \
+&& rm -rf /var/cache/apk/*
 
 # 环境变量
 #ENV PKG_CONFIG_PATH /usr/lib/pkgconfig

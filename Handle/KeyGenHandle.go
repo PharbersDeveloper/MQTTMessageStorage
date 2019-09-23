@@ -89,12 +89,12 @@ func (k KenGenHandler) KeyGen(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT读取参数出错 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT读取参数出错  ", err); return ERROR() }
 	msg := Model.Message{}
 	err = json.Unmarshal(body, &msg)
 	if err != nil { log.NewLogicLoggerBuilder().Build().Error(err); return ERROR() }
 	context := Strategy.MessageContext{ Msg: msg, Rd: k.rd, Em: k.em }
 	res, err := context.DoExecute()
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("生成MQTT Channel Key错误 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("生成MQTT Channel Key错误  ", err); return ERROR() }
 	return SUCCESS(res)
 }

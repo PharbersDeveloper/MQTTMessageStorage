@@ -80,13 +80,13 @@ func (r RetrievingConsumerHandler) RetrievingConsumerTopic(w http.ResponseWriter
 	}
 
 	body, err := ioutil.ReadAll(req.Body)
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("监听Consumer读取参数出错 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("监听Consumer读取参数出错  ", err); return ERROR() }
 	msg := Model.Message{}
 	err = json.Unmarshal(body, &msg)
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("解析地址发送参数出错 => ",err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("解析地址发送参数出错  ",err); return ERROR() }
 	context := Strategy.MessageContext{ Msg: msg, Rd: r.rd, Em: r.em }
 	_, err = context.DoExecute()
 	if err != nil { return ERROR() }
-	log.NewLogicLoggerBuilder().Build().Infof("MQTT 开启监听Kafka Consumer，Topic => %s", msg.Header.Topic)
+	log.NewLogicLoggerBuilder().Build().Infof("MQTT 开启监听Kafka Consumer，Topic  %s", msg.Header.Topic)
 	return 0
 }

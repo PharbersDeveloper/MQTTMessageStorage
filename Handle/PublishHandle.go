@@ -91,20 +91,20 @@ func (k PublishHandler) Publish(w http.ResponseWriter, r *http.Request, _ httpro
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT读取发送参数出错 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT读取发送参数出错  ", err); return ERROR() }
 	msg := Model.Message{}
 	err = json.Unmarshal(body, &msg)
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT解析参数出错 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT解析参数出错  ", err); return ERROR() }
 	rdClient := k.rd.GetRedisClient()
 	result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", msg.Header.Channel)).Result()
 
-	if err == redis.Nil || err != nil { log.NewLogicLoggerBuilder().Build().Error("Redis 获取数据时出错 => ", err); return ERROR() }
+	if err == redis.Nil || err != nil { log.NewLogicLoggerBuilder().Build().Error("Redis 获取数据时出错  ", err); return ERROR() }
 
 	b, _ := json.Marshal(msg)
 	client := k.em.GetClient()
 	err = client.Publish(result, msg.Header.Channel, b, emitter.WithAtLeastOnce())
-	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT发送消息出错 => ", err); return ERROR() }
+	if err != nil { log.NewLogicLoggerBuilder().Build().Error("MQTT发送消息出错  ", err); return ERROR() }
 
-	log.NewLogicLoggerBuilder().Build().Infof("MQTT Client发送消息，Channel => %s,内容 => %s", msg.Header.Channel, b)
+	log.NewLogicLoggerBuilder().Build().Infof("MQTT Client发送消息，Channel  %s,内容  %s", msg.Header.Channel, b)
 	return SUCCESS()
 }

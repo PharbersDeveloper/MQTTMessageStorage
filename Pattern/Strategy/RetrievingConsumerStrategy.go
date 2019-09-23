@@ -32,14 +32,14 @@ func (rcs *RetrievingConsumerStrategy) onConsumerHandler(content interface{}) {
 	_ = json.Unmarshal(message, &msgModel)
 
 	if len(msgModel.Header.Channel) > 0 {
-		log.NewLogicLoggerBuilder().Build().Info("从Kafka中获取MQTT Channel地址 => ", msgModel.Header.Channel)
+		log.NewLogicLoggerBuilder().Build().Info("从Kafka中获取MQTT Channel地址  ", msgModel.Header.Channel)
 		rdClient := rcs.Rd.GetRedisClient()
 		result, err := rdClient.Get(fmt.Sprint("mqtt_channel_key_", msgModel.Header.Channel)).Result()
 		if err != redis.Nil {
 			client := rcs.Em.GetClient()
 			err := client.Publish(result, msgModel.Header.Channel, fmt.Sprint(msgModel.PayLoad), emitter.WithAtLeastOnce())
 			if err != nil {
-				log.NewLogicLoggerBuilder().Build().Error("从Kafka发送获取MQTT Channel地址发送失败,错误信息 => ",err)
+				log.NewLogicLoggerBuilder().Build().Error("从Kafka发送获取MQTT Channel地址发送失败,错误信息  ",err)
 				panic(err.Error())
 			}
 		} else if err != nil {
@@ -57,7 +57,7 @@ func (rcs *RetrievingConsumerStrategy) DoExecute(msg Model.Message) (interface{}
 		kafka, err := bmkafka.GetConfigInstance()
 		kafka.Topics = []string{topic}
 		if err == nil { go func() {
-			log.NewLogicLoggerBuilder().Build().Info("Kafka 启动Consumer监听,Topic => ", topic)
+			log.NewLogicLoggerBuilder().Build().Info("Kafka 启动Consumer监听,Topic  ", topic)
 			kafka.SubscribeTopics(kafka.Topics, rcs.onConsumerHandler)
 		}() }
 	} else {
