@@ -39,8 +39,7 @@ MAINTAINER Pharbers "pqian@pharbers.com"
 RUN echo http://mirrors.aliyun.com/alpine/edge/main > /etc/apk/repositories \
 && echo http://mirrors.aliyun.com/alpine/edge/community >> /etc/apk/repositories \
 && apk update \
-&& apk add --no-cache bash git gcc g++ openssl-dev librdkafka-dev pkgconf \
-&& apk add --no-cache tzdata \
+&& apk add --no-cache tzdata bash git gcc g++ openssl-dev librdkafka-dev pkgconf \
 && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 && echo "Asia/Shanghai" > /etc/timezone \
 && apk del tzdata \
@@ -57,13 +56,13 @@ ENV BP_LOG_LEVEL info
 
 WORKDIR /go/log
 
-WORKDIR /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource
-
-# 提取资源文件
-COPY --from=0 /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/kafkaconfig.json ./
-COPY --from=0 /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/redisconfig.json ./
-COPY --from=0 /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/routerconfig.json ./
-COPY --from=0 /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/service-def.yaml ./
+#WORKDIR /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource
+#
+## 提取资源文件
+#COPY --from=0 /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/kafkaconfig.json ./
+#COPY --from=0 /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/redisconfig.json ./
+#COPY --from=0 /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/routerconfig.json ./
+#COPY --from=0 /go/src/github.com/PharbersDeveloper/MQTTMessageStorage/resources/resource/service-def.yaml ./
 
 WORKDIR /go/bin
 

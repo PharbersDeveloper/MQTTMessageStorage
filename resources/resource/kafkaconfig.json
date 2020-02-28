@@ -2,9 +2,9 @@
   "Broker":"59.110.31.50:9092",
   "SchemaRepositoryUrl":"http://59.110.31.50:8081",
   "Group":"MQTT",
-  "CaLocation":"/snakeoil-ca-1.crt",
-  "CaSignedLocation":"/kafkacat-ca1-signed.pem",
-  "SslKeyLocation":"/kafkacat.client.key",
+  "CaLocation":"/kafka/snakeoil-ca-1.crt",
+  "CaSignedLocation":"/kafka/kafkacat-ca1-signed.pem",
+  "SslKeyLocation":"/kafka/kafkacat.client.key",
   "Pass":"pharbers",
   "Topics": [
   ]

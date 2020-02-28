@@ -35,12 +35,12 @@ functions:
 - name: PublishHandler
   create: NewPublishHandler
   daemons:
-    - BmRedisDaemon
-    - EmitterDaemon
+  - BmRedisDaemon
+  - EmitterDaemon
   method: Publish
   http: POST
   args:
-    - null
+  - null
 
 #middlewares:
 #- name: NtmCheckTokenMiddleware
@@ -76,4 +76,4 @@ daemons:
   - name: EmitterDaemon
     method: NewEmitterDaemon
     args:
-      host: tcp://123.56.179.133:46532
+      host: tcp://localhost:8080
